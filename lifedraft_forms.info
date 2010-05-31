@@ -1,0 +1,7 @@
+; $Id$
+name = lifedraft.de forms
+description = Form Themer
+package = User interface
+core = 6.x
+
+dependencies[] = jquery_ui

@@ -1,0 +1,156 @@
+<?php
+
+/**
+ * hook_theme()
+ */
+function lifedraft_forms_theme() {
+  $items = array();
+  
+  $items["lifedraft_form"] = array(
+    'arguments' => array("form" => NULL),
+    'file' => 'lifedraft_forms.theme.inc'
+  );
+  
+  $items["lifedraft_forms_admin_edit_forms"] = array(
+    'arguments' => array("form" => NULL),
+    'file' => 'lifedraft_forms.admin.inc'
+  );
+  
+  $items["lifedraft_forms_form_item"] = array(
+    'arguments' => array('form_id' => NULL, 'form_item' => NULL),
+    'file' => 'lifedraft_forms.admin.inc'
+  );
+  
+  return $items;
+}
+
+
+/**
+ * hook_menu()
+ */
+function lifedraft_forms_menu() {
+  
+  $items["admin/build/lifedraft_forms"] = array(
+    'title' => "Lifedraft Forms Theme",
+    'description' => 'Theme any form',
+    'file'  => 'lifedraft_forms.admin.view.inc',
+    'page callback' => 'lifedraft_forms_admin_view_forms',
+    'access arguments' => array( 'theme forms' ),
+  );
+  
+  $items["admin/build/lifedraft_forms/edit/%"] = array(
+    'title' => 'edit',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'file' => 'lifedraft_forms.admin.inc',
+    'page callback' => 'lifedraft_forms_admin_edit_forms',
+    'weight' => -10,
+    'page arguments' => array( 4 ),
+  );
+
+  $items["admin/build/lifedraft_forms/save/%"] = array(
+    'title' => 'save',
+    'page callback' => 'lifedraft_forms_admin_save_form',
+    'page arguments' => array( 4 ),
+    'type' => MENU_CALLBACK,
+    'access arguments' => array( 'theme forms' ),
+    'file'  => 'lifedraft_forms.admin.inc',
+  );
+  
+  $items["admin/build/lifedraft_forms/delete/%"] = array(
+    'title' => 'delete',
+    'page callback' => 'lifedraft_forms_admin_delete_form',
+    'page arguments' => array( 4 ),
+    'type' => MENU_CALLBACK,
+    'access arguments' => array( 'theme forms' ),
+    'file'  => 'lifedraft_forms.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * hook_perm()
+ */
+function lifedraft_forms_perm() {
+  return array('theme forms');
+}
+
+function lifedraft_forms_theme_save($form_id, $data) {
+  return variable_set("lifedraft_forms_$form_id", serialize(base64_encode($data)));
+}
+
+function lifedraft_forms_theme_get($form_id) {
+  if ($theme = variable_get("lifedraft_forms_$form_id", '')) {
+    return base64_decode(unserialize($theme));
+  }
+  return FALSE;
+}
+
+function lifedraft_forms_theme_delete($form_id) {
+  if ($theme = variable_get("lifedraft_forms_$form_id", '')) {
+    variable_del("lifedraft_forms_$form_id");
+    return TRUE;
+  }
+  
+  return FALSE;
+}
+
+
+function lifedraft_forms_get_form($form_id) {
+  global $user;
+  
+  module_load_include( 'inc', 'node', 'node.pages');
+  module_load_include( 'inc', 'lifedraft_forms', 'lifedraft_forms.theme' );
+
+  $node = array(
+    'uid' => $user->uid, 
+    'name' => (isset($user->name) ? $user->name : ''), 
+    'type' => preg_replace('/_node_form/', "", $form_id),
+    'language' => ''
+  );
+  
+  $form_storage = array('storage' => NULL, 'submitted' => FALSE);
+  $form = drupal_retrieve_form($form_id, $form_storage, $node);
+  drupal_prepare_form($form_id, $form, $form_storage);
+  drupal_process_form($form_id, $form, $form_storage);
+  
+  $form["#theme"] = array("lifedraft_form");
+  
+  return $form;
+}
+
+function lifedraft_forms_get_form_fields($form) {
+  $form_fields = array();
+  
+  foreach (element_children($form) as $form_field) {
+    if (isset($form[$form_field]) && $form[$form_field]) {
+      
+      if ($form[$form_field]['#type'] == "hidden") {
+        continue;
+      }
+      
+      $rendered = drupal_render($form[$form_field]);
+      if ($rendered) {
+        
+        $form_fields[$form_field] = $rendered;
+      }
+    }
+  }
+  
+  return $form_fields;
+}
+
+function lifedraft_forms_form_alter(&$form, &$form_state, $form_id) {
+  
+  if (strpos($_GET["q"], "admin/build/lifedraft_forms/edit/") === FALSE) {
+    $themed_html = lifedraft_forms_theme_get($form_id);
+    
+    if($themed_html) {
+      
+      $form["#themed_html"] = $themed_html;
+      $form["#theme"] = array("lifedraft_form");
+      
+    }
+  }
+  
+}

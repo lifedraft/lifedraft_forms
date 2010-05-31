@@ -1,0 +1,45 @@
+.ui-state-highlight {
+  height: 20px;
+}
+
+.lifedraft_forms_left {
+  float: left;
+  width: 50%;
+}
+
+.lifedraft_forms_right {
+  float: right;
+  width: 50%;
+  border-left: 1px solid #bababa;
+  margin-left: -1px;
+}
+
+.lifedraft_forms_item {
+  padding-left: 26px;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.lifedraft_forms_controller {
+  position: absolute;
+  left: 5px;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  text-indent: -1000em;
+  background: #359be2 url("images/left.png") 50% 50% no-repeat;
+  cursor: pointer;
+}
+
+.lifedraft_forms_controller:hover {
+  background-color: #2878b0;
+}
+
+.lifedraft_forms_item .active {
+  background-image: url("images/right.png");
+  left: 0;
+}
+
+.lifedraft_forms_item_hover {
+   background-color: #d05342;
+}
