@@ -22,7 +22,7 @@ function lifedraft_forms_admin_edit_forms($form_id) {
   ), "setting");
   
   $breadcrumb = drupal_get_breadcrumb();
-  $breadcrumb[] = l("Forms theme", 'admin/build/lifedraft_forms/' );
+  $breadcrumb[] = l($form_id, 'admin/build/lifedraft_forms/'.$form_id );
   drupal_set_breadcrumb($breadcrumb);
   
   return drupal_get_form( "lifedraft_forms_admin_form", $form_id );
@@ -51,6 +51,7 @@ function lifedraft_forms_admin_form(&$form_state, $theming_form_id) {
       '#type' => 'textarea',
       '#title' => t('HTML'),
       '#default_value' => $themed_html,
+      '#description' => t('You can also save this snippet as template file in your theme: <code><pre>!template</pre></code>', array("!template" => "form-theme--$theming_form_id.tpl.php")),
       '#rows' => '10',
     ),
     'themed_submit' => array(
@@ -83,7 +84,7 @@ function lifedraft_forms_admin_form_submit(&$form, &$form_state) {
     lifedraft_forms_theme_save($theming_form_id, $themed_html);
   }
   
-  drupal_set_message("Your Form theme was successfully saved.");
+  drupal_set_message("Successfully saved/updated.");
 }
 
 
@@ -108,7 +109,7 @@ function lifedraft_forms_admin_add_form(&$form_state) {
 function lifedraft_forms_admin_add_form_submit(&$form, &$form_state) {
   
   if ($form_state["values"]["id"]) {
-    $form["#redirect"] = 'admin/build/lifedraft_forms/edit/' . filter_xss($form_state["values"]["id"]);
+    $form["#redirect"] = 'admin/build/lifedraft_forms/edit/' . check_plain($form_state["values"]["id"]);
   }
   
 }

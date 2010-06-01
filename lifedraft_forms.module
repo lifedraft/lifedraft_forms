@@ -141,6 +141,7 @@ function lifedraft_forms_get_form_fields($form) {
   foreach (element_children($form) as $form_field) {
     if (isset($form[$form_field]) && $form[$form_field]) {
       
+      // skip hidden fields as they can't be themed
       if ($form[$form_field]['#type'] == "hidden") {
         continue;
       }
