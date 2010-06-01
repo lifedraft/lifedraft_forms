@@ -21,6 +21,10 @@ function lifedraft_forms_admin_edit_forms($form_id) {
     ),
   ), "setting");
   
+  $breadcrumb = drupal_get_breadcrumb();
+  $breadcrumb[] = l("Forms theme", 'admin/build/lifedraft_forms/' );
+  drupal_set_breadcrumb($breadcrumb);
+  
   return drupal_get_form( "lifedraft_forms_admin_form", $form_id );
   
 }

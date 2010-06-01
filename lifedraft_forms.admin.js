@@ -8,7 +8,7 @@ Drupal.behaviors.lifedraft_forms = function(context) {
   
   form.find(".lifedraft_forms_controller").live("click", function(event) {
     
-    if(jQuery(this).hasClass("active")) {
+    if(jQuery(this).hasClass("lifedraft_forms_item_inserted")) {
       
       var first_found_position = false;
       textarea.val(textarea.val().replace(new RegExp(this.innerHTML, "g"), function(match, position, rest) {
@@ -47,16 +47,15 @@ Drupal.behaviors.lifedraft_forms = function(context) {
     
     for (var field in fields) {
       if (value.indexOf(field) != -1) {
-        fields[field].addClass("active");
+        fields[field].addClass("lifedraft_forms_item_inserted");
       } else {
-        fields[field].removeClass("active");
+        fields[field].removeClass("lifedraft_forms_item_inserted");
       };
     };
     
     cursor_hover();
     
   };
-  
   
   var field_active = false;
   var cursor_hover = function() {
@@ -106,14 +105,17 @@ Drupal.behaviors.lifedraft_forms = function(context) {
     if (start !== false && end !== false) {
       var key = value.substring(start, end+1);
       
-      if (field_active) {
-        field_active.removeClass("lifedraft_forms_item_hover");
-      };
       
       if (key in fields) {
+
         if (field_active == fields[key]) {
           return;
         };
+        
+        if (field_active) {
+          field_active.removeClass("lifedraft_forms_item_hover");
+        };
+
         field_active = fields[key];
         field_active.addClass("lifedraft_forms_item_hover");
       };

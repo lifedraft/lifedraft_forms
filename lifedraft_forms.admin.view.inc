@@ -29,5 +29,7 @@ function lifedraft_forms_admin_view_forms() {
   
   $form = drupal_get_form('lifedraft_forms_admin_add_form');
   
+  # lifedraft_forms_theme_exsists();
+  
   return  $form . theme('table', $table_header, $table);
 }

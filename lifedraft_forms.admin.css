@@ -27,19 +27,20 @@
   bottom: 0;
   width: 20px;
   text-indent: -1000em;
-  background: #359be2 url("images/left.png") 50% 50% no-repeat;
+  background: #aaa url("images/left.png") 50% 50% no-repeat;
   cursor: pointer;
 }
 
-.lifedraft_forms_controller:hover {
+.lifedraft_forms_item .lifedraft_forms_controller:hover {
   background-color: #2878b0;
 }
 
-.lifedraft_forms_item .active {
+.lifedraft_forms_item .lifedraft_forms_item_inserted {
+  background-color: #359be2;
   background-image: url("images/right.png");
   left: 0;
 }
 
-.lifedraft_forms_item_hover {
+.lifedraft_forms_item .lifedraft_forms_item_hover {
    background-color: #d05342;
 }

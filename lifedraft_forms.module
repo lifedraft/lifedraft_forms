@@ -1,14 +1,20 @@
 <?php
 
 /**
- * hook_theme()
+ * Implementation of hook_theme()
  */
 function lifedraft_forms_theme() {
   $items = array();
   
   $items["lifedraft_form"] = array(
     'arguments' => array("form" => NULL),
-    'file' => 'lifedraft_forms.theme.inc'
+    'file' => 'lifedraft_forms.theme.inc',
+  );
+  
+  $items["form_theme"] = array(
+    'arguments' => array("themed_html" => NULL),
+    'template' => 'form_theme',
+    'pattern' => 'form_theme__'
   );
   
   $items["lifedraft_forms_admin_edit_forms"] = array(
@@ -26,42 +32,52 @@ function lifedraft_forms_theme() {
 
 
 /**
- * hook_menu()
+ * Implementation of hook_menu()
  */
 function lifedraft_forms_menu() {
   
-  $items["admin/build/lifedraft_forms"] = array(
+  $base = array(
+    'access arguments' => array( 'theme forms' ),
+  );
+  
+  $items["admin/build/lifedraft_forms"] = $base + array(
     'title' => "Lifedraft Forms Theme",
     'description' => 'Theme any form',
     'file'  => 'lifedraft_forms.admin.view.inc',
     'page callback' => 'lifedraft_forms_admin_view_forms',
-    'access arguments' => array( 'theme forms' ),
+    'type' => MENU_NORMAL_ITEM,
   );
   
-  $items["admin/build/lifedraft_forms/edit/%"] = array(
-    'title' => 'edit',
+  $items["admin/build/lifedraft_forms/list"] = $base + array(
+    'title' => "List",
+    'file'  => 'lifedraft_forms.admin.view.inc',
+    'page callback' => 'lifedraft_forms_admin_view_forms',
     'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => '-1'
+  );
+  
+  $items["admin/build/lifedraft_forms/edit/%"] = $base + array(
+    'title' => 'Edit',
     'file' => 'lifedraft_forms.admin.inc',
     'page callback' => 'lifedraft_forms_admin_edit_forms',
-    'weight' => -10,
     'page arguments' => array( 4 ),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1
   );
 
-  $items["admin/build/lifedraft_forms/save/%"] = array(
+  $items["admin/build/lifedraft_forms/save/%"] = $base + array(
     'title' => 'save',
     'page callback' => 'lifedraft_forms_admin_save_form',
     'page arguments' => array( 4 ),
     'type' => MENU_CALLBACK,
-    'access arguments' => array( 'theme forms' ),
     'file'  => 'lifedraft_forms.admin.inc',
   );
   
-  $items["admin/build/lifedraft_forms/delete/%"] = array(
+  $items["admin/build/lifedraft_forms/delete/%"] = $base + array(
     'title' => 'delete',
     'page callback' => 'lifedraft_forms_admin_delete_form',
     'page arguments' => array( 4 ),
     'type' => MENU_CALLBACK,
-    'access arguments' => array( 'theme forms' ),
     'file'  => 'lifedraft_forms.admin.inc',
   );
 
@@ -69,7 +85,7 @@ function lifedraft_forms_menu() {
 }
 
 /**
- * hook_perm()
+ * Implementation of hook_perm()
  */
 function lifedraft_forms_perm() {
   return array('theme forms');
@@ -100,7 +116,7 @@ function lifedraft_forms_get_form($form_id) {
   global $user;
   
   module_load_include( 'inc', 'node', 'node.pages');
-  module_load_include( 'inc', 'lifedraft_forms', 'lifedraft_forms.theme' );
+  module_load_include( 'inc', 'lifedraft_forms', 'lifedraft_forms.theme');
 
   $node = array(
     'uid' => $user->uid, 
@@ -140,16 +156,19 @@ function lifedraft_forms_get_form_fields($form) {
   return $form_fields;
 }
 
+
+/**
+ * Implementation of hook_form_alter
+ */
 function lifedraft_forms_form_alter(&$form, &$form_state, $form_id) {
   
-  if (strpos($_GET["q"], "admin/build/lifedraft_forms/edit/") === FALSE) {
-    $themed_html = lifedraft_forms_theme_get($form_id);
-    
-    if($themed_html) {
-      
-      $form["#themed_html"] = $themed_html;
+  if (strpos($_GET["q"], "admin/build/lifedraft_forms/edit") === FALSE) {
+    $themed_html   = lifedraft_forms_theme_get($form_id);
+    $template_file = theme(array("form_theme__$form_id", "form_theme"), $themed_html);
+
+    if($template_file) {
+      $form["#themed_html"] = $template_file;
       $form["#theme"] = array("lifedraft_form");
-      
     }
   }
   
