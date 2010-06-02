@@ -8,7 +8,6 @@ function lifedraft_forms_admin_edit_forms($form_id) {
   
   $lifedraft_forms_path = drupal_get_path("module", "lifedraft_forms");
   
-  jquery_ui_add( array( 'ui.draggable', 'ui.droppable', 'ui.sortable' ) );
   drupal_add_js(  $lifedraft_forms_path . "/vendor/lifedraft_selection/jquery.lifedraft_selection.js" );
   drupal_add_js(  $lifedraft_forms_path . "/lifedraft_forms.admin.js" );
   drupal_add_css( $lifedraft_forms_path . "/lifedraft_forms.admin.css" );
@@ -90,14 +89,17 @@ function lifedraft_forms_admin_form_submit(&$form, &$form_state) {
 
 function lifedraft_forms_admin_add_form(&$form_state) {
   
+  $lifedraft_forms_path = drupal_get_path("module", "lifedraft_forms");
+  drupal_add_css( $lifedraft_forms_path . "/lifedraft_forms.admin.css" );
+  
   $form = array(
     'id' => array(
       '#type' => "textfield",
       '#title' => t("Form ID"),
       '#required' => TRUE,
-      '#description' => t('This is the hidden input field inside of each drupal form named form_id. 
-                           Please enter here the value of this hidden field. <br/>
-                           For example this form has this form id <code><pre>@example</pre></code>', 
+      '#description' => t('<p>This is the hidden input field inside of each drupal form named <code>form_id</code>.
+Please enter the value of this hidden field.</p>
+<p>For example the current form has this <code>form_id</code>: <code style="white-space:nowrap;">@example</code></p>',
                            array("@example" => '<input type="hidden" name="form_id" id="edit-lifedraft-forms-admin-add-form" value="lifedraft_forms_admin_add_form" />')),
     ),
     'submit' => array(
