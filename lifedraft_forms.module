@@ -12,8 +12,8 @@ function lifedraft_forms_theme() {
   );
   
   $items["form_theme"] = array(
-    'arguments' => array("themed_html" => NULL),
-    'template' => 'form_theme',
+    'arguments' => array("themed_html" => NULL, "form_id" => NULL),
+    'template' => 'form-theme',
     'pattern' => 'form_theme__'
   );
   
@@ -165,8 +165,8 @@ function lifedraft_forms_form_alter(&$form, &$form_state, $form_id) {
   
   if (strpos($_GET["q"], "admin/build/lifedraft_forms/edit") === FALSE) {
     $themed_html   = lifedraft_forms_theme_get($form_id);
-    $template_file = theme(array("form_theme__$form_id", "form_theme"), $themed_html);
-
+    $template_file = theme(array("form_theme__$form_id", "form_theme"), $themed_html, $form_id);
+    
     if($template_file) {
       $form["#themed_html"] = $template_file;
       $form["#theme"] = array("lifedraft_form");
