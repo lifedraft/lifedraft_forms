@@ -95,6 +95,10 @@ function lifedraft_forms_admin_add_form(&$form_state) {
       '#type' => "textfield",
       '#title' => t("Form ID"),
       '#required' => TRUE,
+      '#description' => t('This is the hidden input field inside of each drupal form named form_id. 
+                           Please enter here the value of this hidden field. <br/>
+                           For example this form has this form id <code><pre>@example</pre></code>', 
+                           array("@example" => '<input type="hidden" name="form_id" id="edit-lifedraft-forms-admin-add-form" value="lifedraft_forms_admin_add_form" />')),
     ),
     'submit' => array(
       '#type' => 'submit',

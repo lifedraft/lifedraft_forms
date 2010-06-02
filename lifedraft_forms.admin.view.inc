@@ -10,7 +10,7 @@ function lifedraft_forms_admin_view_forms() {
   foreach ($conf as $key => $value) {
     
     if (strpos($key, "lifedraft_forms_") !== FALSE) {
-      $form_id = preg_replace('/lifedraft_forms_/', '', $key);
+      $form_id = preg_replace('/^lifedraft_forms_/', '', $key);
       
       $table[] = array(
         $form_id, 
